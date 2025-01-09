@@ -1,0 +1,61 @@
+<form [formGroup]="promoCodeForm" (ngSubmit)="onSave()">
+    <div class="p-fluid p-3">
+        <div class="p-field mt-2">
+            <label for="name">{{ 'Admin.PromoCode.PromoCode_Form.Promo_Code_Name' | translate }}</label>
+            <input id="name" pInputText formControlName="name" [required]="true" maxlength="256" />
+            <small *ngIf="formControls['name'].touched && formControls['name'].invalid" class="p-error">
+            </small>
+        </div>
+
+        <div class="p-field mt-2">
+            <label for="startDate">{{ 'Admin.PromoCode.PromoCode_Form.Begin_Dates' | translate }}</label>
+            <p-calendar id="startDate" formControlName="startDate" dateFormat="mm.dd.yy" [readonlyInput]="true"
+                appendTo="body" [showIcon]="true">
+            </p-calendar>
+            <small *ngIf="formControls['startDate'].touched && formControls['startDate'].invalid" class="p-error">
+            </small>
+        </div>
+
+        <div class="p-field mt-2">
+            <label for="endDate">{{ 'Admin.PromoCode.PromoCode_Form.End_Dates' | translate }}</label>
+            <p-calendar id="endDate" formControlName="endDate" dateFormat="mm.dd.yy" [readonlyInput]="true"
+                appendTo="body" [showIcon]="true">
+            </p-calendar>
+            <small *ngIf="formControls['endDate'].touched && formControls['endDate'].invalid" class="p-error">
+            </small>
+        </div>
+
+        <div class="p-field mt-2">
+            <label for="freeMonths">{{ 'Admin.PromoCode.PromoCode_Form.Free_Month' | translate }}</label>
+            <p-inputNumber id="freeMonths" formControlName="freeMonths" [min]="0"></p-inputNumber>
+            <small *ngIf="formControls['freeMonths'].touched && formControls['freeMonths'].invalid" class="p-error">
+            </small>
+        </div>
+
+        <div class="p-field mt-2">
+            <label for="requests">{{ 'Admin.PromoCode.PromoCode_Form.Requests' | translate }}</label>
+            <p-inputNumber id="requests" formControlName="requests" [min]="0"></p-inputNumber>
+            <small *ngIf="formControls['requests'].touched && formControls['requests'].invalid" class="p-error">
+            </small>
+        </div>
+
+        <div class="p-field-checkbox mt-4">
+            <p-checkbox formControlName="freeBinder" [binary]="true"
+                label="{{ 'Admin.PromoCode.PromoCode_Form.Free_Binder' | translate }}">
+            </p-checkbox>
+        </div>
+
+        <div class="p-field-checkbox mt-2">
+            <p-checkbox formControlName="setupFee" [binary]="true" [checked]="promoCodeForm.value.setupFee > 0"
+                label="{{ 'Admin.PromoCode.PromoCode_Form.Setup_Fee' | translate }}">
+            </p-checkbox>
+        </div>
+
+        <div class="p-dialog-footer d-flex justify-content-end mt-8">
+            <p-button type="button" label="{{ 'Admin.PromoCode.PromoCode_Button.Cancel' | translate }}"
+                styleClass="p-button p-button-text p-button-sm mr-2" (click)="onCancel()"></p-button>
+            <button pButton type="submit" label="{{ 'Admin.PromoCode.PromoCode_Button.Save' | translate }}"
+                class="p-button-primary p-button-sm" [disabled]="!promoCodeForm.valid"></button>
+        </div>
+    </div>
+</form>

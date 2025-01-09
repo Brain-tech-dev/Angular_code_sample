@@ -1,0 +1,109 @@
+<style>
+  .logo-preview {
+
+    max-width: 250px; /* Limit the width of the logo */
+    max-height: 250px; /* Limit the height of the logo */
+    object-fit: contain; /* Ensure the aspect ratio is maintained */
+  }
+
+  .button-container {
+    display: inline-flex;
+    gap: 1rem;
+  }
+</style>
+
+<div class="card-body">
+  <div>
+    <h4>{{ 'Manager.Reseller.Customization.LogoTitle' | translate }}</h4>
+    <h6>{{ 'Manager.Reseller.Customization.LogoDescription' | translate }}</h6>
+  </div>
+  <div class="flex overflow-hidden">
+    <div class="flex-none flex align-items-center justify-content-center font-bold border-round">
+      <div class="button-container">
+        <p-fileUpload
+          #logoFileUpload
+          [customUpload]="true"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          (onSelect)="onTopLogoSelect($event)"
+          accept=".png,.jpg,.jpeg,.gif"
+          [maxFileSize]="512 * 2048"
+          chooseLabel="{{ 'Manager.Account.SafetySearchCustomization.Browse' | translate }}" mode="basic"
+          [multiple]="false"
+        ></p-fileUpload>
+        <p-button label="Reset" icon="pi pi-undo" (click)="onResetLogo()" *ngIf="vm.currentLogoFile || vm.originalSettingLogo"></p-button>
+        <p-button *ngIf="vm.currentLogoFile || vm.originalSettingLogo" label="Remove" icon="pi pi-times" (click)="onRemoveLogo()" iconPos="right"></p-button>
+      </div>
+    </div>
+    <div class="flex-grow-1 flex align-items-center font-bold m-2 px-5 py-3 border-round min-h-0">
+      <img alt="logo" *ngIf="vm.currentLogoUrl && vm.currentLogoFile === null" [src]="vm.currentLogoUrl" class="logo-preview">
+      <img alt="logo" *ngIf="vm.currentLogoFile !== null" [src]="vm.currentLogoFile" class="logo-preview"></div>
+  </div>
+  <div>
+    <h4>{{ 'Manager.Reseller.Customization.IconTitle' | translate }}</h4>
+    <h6>{{ 'Manager.Reseller.Customization.IconDescription' | translate }}</h6>
+  </div>
+  <div class="flex overflow-hidden">
+    <div class="flex-none flex align-items-center justify-content-center font-bold border-round">
+      <div class="button-container">
+        <p-fileUpload
+          #naviIconUpload
+          [customUpload]="true"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          (onSelect)="onNaviIconSelect($event)"
+          accept=".png,.jpg,.jpeg,.gif"
+          [maxFileSize]="22429"
+          chooseLabel="{{ 'Manager.Account.SafetySearchCustomization.Browse' | translate }}" mode="basic"
+          [multiple]="false"
+        ></p-fileUpload>
+        <p-button label="Reset" icon="pi pi-undo" (click)="onResetNaviIcon()" *ngIf="vm.currentLogoNaviIconFile || vm.originalSettingIcon"></p-button>
+        <p-button label="Remove" icon="pi pi-times" (click)="onRemoveNaviIcon()" iconPos="right" *ngIf="vm.currentLogoNaviIconFile || vm.originalSettingIcon"></p-button>
+      </div>
+    </div>
+    <div class="flex-grow-1 flex align-items-center font-bold m-2 px-5 py-3 border-round">
+      <img alt="iconURL" *ngIf="vm.currentLogoNaviIconUrl && vm.currentLogoNaviIconFile === null" [src]="vm.currentLogoNaviIconUrl" class="logo-preview">
+      <img alt="iconFile" *ngIf="vm.currentLogoNaviIconFile !== null" [src]="vm.currentLogoNaviIconFile" class="logo-preview">
+    </div>
+  </div>
+  <div style="margin-top: 15px">
+    <h4>{{ 'Manager.Reseller.Customization.SSCenterLogo' | translate }}</h4>
+    <h6>{{ 'Manager.Reseller.Customization.SSCenterLogoDescription' | translate }}</h6>
+  </div>
+  <div class="flex overflow-hidden">
+    <div class="flex-none flex align-items-center justify-content-center font-bold border-round">
+      <div class="button-container">
+        <p-fileUpload
+          #sslogoFileUpload
+          [customUpload]="true"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          (onSelect)="onSSLogoSelect($event)"
+          accept=".png,.jpg,.jpeg,.gif"
+          [maxFileSize]="512 * 2048"
+          chooseLabel="{{ 'Manager.Account.SafetySearchCustomization.Browse' | translate }}" mode="basic"
+          [multiple]="false">
+        </p-fileUpload>
+        <p-button label="Reset" icon="pi pi-undo" (click)="onResetSSLogo()" *ngIf="vm.currentSSLogoFile || vm.originalSettingSSLogo"></p-button>
+        <p-button *ngIf="vm.currentSSLogoFile || vm.originalSettingSSLogo" label="Remove" icon="pi pi-times" (click)="onRemoveSSLogo()" iconPos="right"></p-button>
+      </div>
+    </div>
+    <div class="flex-grow-1 flex align-items-center font-bold m-2 px-5 py-3 border-round min-h-0">
+      <img alt="logo" *ngIf="vm.currentSSLogoUrl && vm.currentSSLogoFile === null" [src]="vm.currentSSLogoUrl" class="logo-preview">
+      <img alt="logo" *ngIf="vm.currentSSLogoFile !== null" [src]="vm.currentSSLogoFile" class="logo-preview">
+    </div>
+  </div>
+  <div class="flex" style="margin-top: 15px">
+    <h4>{{ 'Manager.Reseller.Customization.BrandNameTitle' | translate }}</h4>
+  </div>
+  <div class="flex">
+    <input type="text" pInputText [(ngModel)]="vm.brandName" maxlength="30" required />
+  </div>
+
+  <div class="margin-button" style="margin-top: 15px">
+    <p-button type="button" label="Save" (click)="onSave()"></p-button>
+    <p-button label="Cancel"  (click)="onCancel()" styleClass="p-button p-button-text p-button-sm mr-2"></p-button>
+
+
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<div class="surface-section py-2" *ngIf="reseller">
+  <ul class="list-none p-0 m-0">
+    <li class="flex align-tems center surface-border flex-wrap">
+      <div class="text-900 w-full d-flex justify-content-between">
+        <p-tag
+          *ngIf="reseller.status === status.Active"
+          value="{{ 'Generic.Active' | translate }}"
+          styleClass="bg-green-100 text-green-600"
+          class="status"
+        ></p-tag>
+        <p-tag
+          *ngIf="reseller.status === status.Inactive"
+          value="{{ 'Generic.Inactive' | translate }}"
+          styleClass="bg-gray-100 text-gray-600"
+          class="status"
+        ></p-tag>
+        <p-menu #menu [popup]="true" [model]="actions" appendTo="body"></p-menu>
+        <button
+          pButton
+          pRipple
+          type="button"
+          label="{{ 'Generic.Actions' | translate }}"
+          icon="pi pi-chevron-down"
+          iconPos="right"
+          class="p-button-text p-button-sm py-0"
+          (click)="menu.toggle($event)"
+        ></button>
+      </div>
+    </li>
+    <li class="flex align-items-center py-3 px-2 surface-border flex-wrap">
+      <div class="text-500 w-full font-medium">{{ 'Manager.Reseller.Name' | translate }}</div>
+      <div class="text-900 w-full md:flex-order-0 flex-order-1 name">{{ reseller.name }}</div>
+    </li>
+    <!-- Settings -->
+    <li
+      class="flex align-items-center py-3 px-2 surface-border flex-wrap"
+      *ngFor="let setting of reseller.settingsMaped"
+    >
+      <div class="text-500 w-full font-medium">{{ 'Manager.Reseller.' + setting.key | translate }}</div>
+      <div class="text-900 w-full md:flex-order-0 flex-order-1 {{ setting.key }}">
+        <span *ngIf="setting.settingType === settingTypes.string">{{ setting.value }}</span>
+
+        <span *ngIf="setting.settingType === settingTypes.boolean">
+          {{ 'Generic.' + setting.value | translate }}
+        </span>
+      </div>
+    </li>
+  </ul>
+</div>
+<p-toast position="bottom-right"></p-toast>

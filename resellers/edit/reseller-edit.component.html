@@ -1,0 +1,52 @@
+<form [formGroup]="resellerForm" (ngSubmit)="onSubmit()">
+  <div class="my-3">
+    <div>{{ 'Manager.ResellerEdit.Name' | translate }}</div>
+    <input type="text" class="w-100" pInputText formControlName="name" />
+  </div>
+  <div class="my-3">
+    <div>{{ 'Manager.ResellerEdit.Status' | translate }}</div>
+    <p-dropdown [options]="statusOptions" styleClass="w-100" formControlName="status"></p-dropdown>
+  </div>
+  <div formGroupName="settings">
+    <div class="my-3">
+      <div>{{ 'Manager.ResellerEdit.BrandName' | translate }}</div>
+      <input type="text" class="w-100" pInputText formControlName="BrandName" />
+    </div>
+    <div class="my-3">
+      <div>{{ 'Manager.ResellerEdit.DomainName' | translate }}</div>
+      <div>
+        <span>{{ resellerForm.controls['settings'].value.DomainName }}.totalsds.com</span>
+      </div>
+    </div>
+    <div class="my-3">
+      <div>{{ 'Manager.ResellerEdit.UniqueServerInstance' | translate }}</div>
+      <p-dropdown [options]="uniqueOptions" styleClass="w-100" formControlName="UniqueServerInstance"></p-dropdown>
+    </div>
+  </div>
+  <div class="my-3">
+    <div>{{ 'Manager.ResellerEdit.Contact' | translate }}</div>
+    <span>Jane Doe</span>
+  </div>
+  <div class="my-3">
+    <div>{{ 'Manager.ResellerEdit.Email' | translate }}</div>
+    <span>jdone@mail.com</span>
+  </div>
+  <div class="d-flex justify-content-end">
+    <button
+      pButton
+      pRipple
+      type="button"
+      label="{{ 'Global.Cancel' | translate }}"
+      class="p-button-text mr-2 py-0 btn-cancel"
+      (click)="onCancel()"
+    ></button>
+    <button
+      [disabled]="resellerForm.invalid"
+      pButton
+      type="submit"
+      label="{{ 'Global.Save' | translate }}"
+      styleClass="p-button-sm"
+      class="btn-submit"
+    ></button>
+  </div>
+</form>

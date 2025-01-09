@@ -1,0 +1,141 @@
+<div class="flex justify-content-between align-items-center px-3 pt-5 relative lg:static">
+  <div class="font-semibold text-2xl">{{ 'Manager.Reseller.Title' | translate }}</div>
+</div>
+
+<p-table
+  #resellerTable
+  [columns]="selectedColumns"
+  [(selection)]="vm.selectedResellers"
+  [value]="vm.resellers"
+  dataKey="id"
+  [loading]="vm.loading"
+  responsiveLayout="scroll"
+>
+  <ng-template pTemplate="caption">
+    <div class="flex flex-column">
+      <div class="flex justify-content-between flex-wrap">
+        <span class="p-input-icon-right p-ml-auto"></span>
+        <p-multiSelect
+          [options]="this.vm.cols"
+          [(ngModel)]="selectedColumns"
+          optionLabel="header"
+          class="mr-5"
+          placeholder="{{ 'Global.Columns' | translate }}"
+        >
+          <ng-template let-value pTemplate="selectedItems">
+            {{ selectedColumns.length }} {{ 'Global.SelectedColumns' | translate }}
+          </ng-template>
+          <ng-template let-item pTemplate="item">
+            {{ item.header | translate }}
+          </ng-template>
+        </p-multiSelect>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th style="width: 3rem">
+        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+      </th>
+      <th pSortableColumn="name">
+        {{ 'Manager.Reseller.Name' | translate }}
+        <p-sortIcon field="name"></p-sortIcon>
+      </th>
+      <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+        {{ col.header | translate }}
+        <p-sortIcon [field]="col.field"></p-sortIcon>
+      </th>
+      <th style="width: 3rem">{{ 'Global.Actions' | translate }}</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-reseller let-columns="columns">
+    <tr>
+      <td><p-tableCheckbox [value]="reseller"></p-tableCheckbox></td>
+      <td>
+        <span class="cursor-pointer name" (click)="showPreview(reseller)">{{ reseller.name }}</span>
+      </td>
+      <ng-container *ngFor="let col of columns">
+        <td *ngIf="col.field === 'primaryContact'">{{ reseller.contactName }}</td>
+        <td *ngIf="col.field === 'primaryEmail'">{{ reseller.email }}</td>
+        <td *ngIf="col.field === 'createdOn'">{{ reseller.createdOn | date }}</td>
+        <td *ngIf="col.field === 'status'" class="status">{{ 'Generic.' + reseller.statusText | translate }}</td>
+      </ng-container>
+      <td>
+        <div class="d-flex justify-content-evenly align-items-center">
+          <button
+          class="p-button-rounded p-button-secondary bg-white text-dark border-0"
+          (click)="redirectToDetailsPage(reseller.id)"
+          type="button"
+          tooltipPosition="left"
+          [pTooltip]="('Manager.Reseller.SeeDetails' | translate)"
+          style="width: 24px; height: 24px; display: flex; justify-content: center; align-items: center;"
+          >
+          <i class="pi pi-info-circle" style="color: currentColor; font-weight: bold; font-size: larger;"></i>
+          </button>
+          <button
+            pButton
+            [pTooltip]="
+              reseller.statusText === 'Active'
+                ? ('Manager.Reseller.DeactivateReseller' | translate)
+                : ('Manager.Reseller.ActivateReseller' | translate)"
+            type="button"
+            tooltipPosition="left"
+            [disabled]="this.vm.toggleResellerStatus"
+            (click)="changeResellerStatusConfirmation(reseller)"
+            class="p-button-rounded p-button-secondary bg-white text-dark border-0"
+          >
+            <svg style="width: 24px; height: 24px" viewBox="0 0 24 24">
+              <path
+                *ngIf="reseller.status === vm.status.Active"
+                fill="currentColor"
+                d="M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z"
+              />
+              <path
+                *ngIf="reseller.status === vm.status.Inactive"
+                fill="currentColor"
+                d="M20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4C12.76,4 13.5,4.11 14.2,4.31L15.77,2.74C14.61,2.26 13.34,2 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12M7.91,10.08L6.5,11.5L11,16L21,6L19.59,4.58L11,13.17L7.91,10.08Z"
+              />
+            </svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="5">{{ 'Manager.Reseller.EmptyList' | translate }}</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-toast position="bottom-right"></p-toast>
+
+<div class="mt-6 h-1rem"></div>
+<div class="d-flex justify-content-end fixed-bottom ml-320 py-3 pr-3 surface-ground">
+  <p-button
+    label="{{ 'Manager.Reseller.AddReseller' | translate }}"
+    styleClass="p-button-sm"
+    (click)="vm.showAdd = true"
+  ></p-button>
+</div>
+
+<app-r-sidebar [display]="vm.showSummary" (closed)="closePreview()">
+  <ng-container *ngIf="vm.selectedId !== 0">
+    <app-reseller-summary [resellerId]="vm.selectedId" (resellerEdit)="onResellerEdit($event)"></app-reseller-summary>
+  </ng-container>
+</app-r-sidebar>
+
+<app-r-sidebar [display]="vm.showAdd" (closed)="vm.showAdd = false">
+  <app-reseller-add [(show)]="vm.showAdd" (resellerAdded)="resellerAdded($event)"></app-reseller-add>
+</app-r-sidebar>
+
+<app-r-sidebar [display]="vm.showEdit" (closed)="vm.showEdit = false">
+  <ng-container *ngIf="vm.showEdit">
+    <app-reseller-edit
+      [(show)]="vm.showEdit"
+      [reseller]="vm.selectedReseller"
+      (resellerUpdated)="onResellerUpdated($event)"
+    ></app-reseller-edit>
+  </ng-container>
+</app-r-sidebar>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" rejectButtonStyleClass="p-button-outlined"></p-confirmDialog>

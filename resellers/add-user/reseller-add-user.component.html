@@ -1,0 +1,43 @@
+<div class="mx-2 padding-down" [formGroup]="userForm">
+    <h3 class="font-weight-bold">{{ 'Manager.User.AddUser' | translate }}</h3>
+    <div class="my-3">
+      <h4>{{ 'Manager.User.Columns.User' | translate }}</h4>
+      <p-autoComplete 
+        [suggestions]="modelView.usersFiltered" 
+        formControlName='email' styleClass='w-100'
+        (completeMethod)="filterForUserOptions($event)" 
+        [inputStyle]="{'width':'100%'}"
+        placeholder="{{ 'Manager.User.InviteUser' | translate }}" 
+        appendTo='body'>
+      </p-autoComplete>
+    </div>
+    <div class="my-3">
+      <h4>{{ 'Manager.User.Columns.Role' | translate }}</h4>
+      <p-dropdown
+        formControlName="roles"
+        appendTo="body"
+        styleClass="w-100"
+        [options]="modelView.groups"
+        placeholder="{{ 'Manager.User.SelectRole' | translate }}"
+        optionLabel="name"
+        optionValue="id"
+      ></p-dropdown>
+    </div>
+    <div class="d-flex justify-content-end">
+      <p-button
+        type="button"
+        label="{{ 'Global.Cancel' | translate }}"
+        [disabled]='modelView.isSubmitting'
+        styleClass="p-button p-button-text p-button-sm mr-2"
+        (click)="this.userAdded.emit(true);"
+      ></p-button>
+      <p-button
+        label="{{ 'Global.Invite' | translate  }}"
+        styleClass="p-button-sm"
+        [disabled]='userForm.invalid || modelView.isSubmitting'
+        type="submit"
+        (click)="onFormSubmit()"
+      ></p-button>
+    </div>
+</div>
+  

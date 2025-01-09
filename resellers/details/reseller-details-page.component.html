@@ -1,0 +1,222 @@
+<div *ngIf="viewModel.loading" class="loading-overlay">
+  <p-progressSpinner></p-progressSpinner>
+</div>
+<div *ngIf="!viewModel.loading">
+  <div class="pl-1 mx-2" *ngIf="viewModel.isSystemAdmin">
+    <button pButton pRipple type="button" label="{{ 'Global.Back' | translate }}" (click)="backButton()"
+      class="p-button-text p-button-plain font-medium p-2">
+      <i class="pi pi-arrow-left text-xs mx-2"></i>
+    </button>
+  </div>
+  <div class="flex justify-content-between align-items-center px-4 pt-5 relative lg:static">
+    <div class="font-semibold text-2xl">{{ 'Manager.ResellerDetails.Title' | translate }}</div>
+  </div>
+  <div class="pl-2 mx-2">
+    <div class="row m-0">
+      <div class="col-4">
+        <div class="my-3 font-semibold">
+          <span class="d-block">{{ 'Manager.Reseller.Name' | translate }}</span>
+          <span class="d-block text-primary mt-2">{{ viewModel.reseller?.name }}</span>
+        </div>
+        <div class="my-3">
+          <span class="d-block font-semibold">{{ 'Manager.ResellerDetails.Labels.DateCreated' | translate}}</span>
+          <span class="d-block mt-2">{{viewModel.reseller?.createdOn | date: 'mediumDate' }}</span>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="my-3">
+          <span class="d-block font-semibold">{{ 'Manager.ResellerDetails.Labels.Status' | translate }}</span>
+          <span class="d-block mt-2">
+            <p-tag [value]="getResellerStatusText(viewModel.reseller?.status)"
+              [styleClass]="viewModel.reseller?.status === viewModel.ResellerStatus.Active ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'">
+            </p-tag>
+          </span>
+        </div>
+        <div class="my-3">
+          <span class="d-block font-semibold">{{ 'Manager.ResellerDetails.Labels.NumberOfProducts' | translate }}</span>
+          <span class="d-block mt-2">{{viewModel.numberOfProductsInLibrary}}</span>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="my-3">
+          <span class="d-block font-semibold">{{ 'Manager.ResellerDetails.Labels.NumberOfAccounts' | translate }}</span>
+          <span class="d-block mt-2">{{this.viewModel.numberOfAccounts}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <p-tabView>
+    <p-tabPanel header="{{ 'Manager.ResellerDetails.TabTitles.ResellerUsers' | translate }}">
+      <div class="pl-2 mx-2">
+        <p-table [columns]="[viewModel.usersList]" [value]="viewModel.usersList" [paginator]="true" [rows]="5"
+          [showCurrentPageReport]="true" [resizableColumns]="true" styleClass="p-datatable-gridlines"
+          [rowsPerPageOptions]="[5, 10, 20]">
+          <ng-template pTemplate="header" let-user>
+            <tr>
+              <th pSortableColumn="firstName" style="width: 3rem">{{ 'Manager.User.Columns.FirstName' | translate }}
+                <p-sortIcon field="firstName"></p-sortIcon>
+              </th>
+              <th pSortableColumn="lastName" style="width: 3rem">{{ 'Manager.User.Columns.LastName' | translate }}
+                <p-sortIcon field="lastName"></p-sortIcon>
+              </th>
+              <th pSortableColumn="email" style="width: 3rem">{{ 'Manager.User.Columns.Email' | translate }} <p-sortIcon
+                  field="email"></p-sortIcon></th>
+              <th style="width: 3rem">{{ 'Manager.User.Columns.Role' | translate }}</th>
+              <th style="width: 3rem">{{ 'Manager.User.Columns.Status' | translate }}</th>
+              <th style="width: 3rem">{{ 'Global.Actions' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-user>
+            <tr>
+              <td style="width: 3rem">{{user.firstName}}</td>
+              <td style="width: 3rem">{{user.lastName}}</td>
+              <td style="width: 3rem">{{user.email}}</td>
+              <td style="width: 3rem">{{user.roles}}</td>
+              <td style="width: 3rem">
+                <p-tag [value]="getUserStatusDetails(user.status).value"
+                  [styleClass]="getUserStatusDetails(user.status).styleClass">
+                </p-tag>
+              </td>
+              <td style="width: 3rem">
+                <div class="d-flex justify-content-evenly">
+                  <button (click)='setCurrentUserForDeletion(user); this.viewModel.showDeleteDialog = true;' pButton
+                    pTooltip="Delete User" tooltipPosition="left" type="button"
+                    class="p-button-rounded p-button-secondary bg-white text-dark border-0">
+                    <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                      <path fill="currentColor"
+                        d="M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z" />
+                    </svg>
+                  </button>
+                </div>
+                <p-dialog header="Delete user" [(visible)]="viewModel.showDeleteDialog" (onHide)="hideDeleteDialog()"
+                  [resizable]="false">
+                  <ng-template pTemplate="content">
+                    Are you sure you want to delete the user?
+                  </ng-template>
+                  <ng-template pTemplate="footer" class="d-flex justify-content-end">
+                    <button pButton pRipple type="button" label="{{ 'Global.Cancel' | translate }}"
+                      class="p-button-text p-button p-button-sm mr-2" (click)="hideDeleteDialog()"></button>
+                    <p-button label="{{ 'Global.Delete' | translate }}"
+                      (onClick)="deleteUser(viewModel.currentUserForDeletion)"
+                      styleClass="p-button-sm p-button-danger"></p-button>
+                  </ng-template>
+                </p-dialog>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      <div class="mt-6 h-1rem"></div>
+      <div class="d-flex justify-content-end fixed-bottom ml-320 py-3 pr-3 surface-ground">
+        <p-button label="{{ 'Manager.User.AddUser' | translate }}" styleClass="p-button-sm"
+          (onClick)="viewModel.visibleAddResellerUser = true;"></p-button>
+      </div>
+      <app-r-sidebar *ngIf='viewModel.visibleAddResellerUser' [display]="viewModel.visibleAddResellerUser"
+        (closed)="viewModel.visibleAddResellerUser = false">
+        <app-reseller-add-user [resellerId]="viewModel.reseller.id" (userAdded)="onResellerUserAdd($event)"
+          [showDialog]="viewModel.visibleAddResellerUser">
+        </app-reseller-add-user>
+      </app-r-sidebar>
+    </p-tabPanel>
+    <p-tabPanel header="{{ 'Manager.ResellerDetails.TabTitles.ResellerCustomization' | translate }}">
+      <app-reseller-customization *ngIf="viewModel.reseller" [reseller]="viewModel.reseller"
+        (saveChanges)="customizationChanged($event)">
+
+      </app-reseller-customization>
+    </p-tabPanel>
+    <p-tabPanel *ngIf="viewModel.isSystemAdmin"
+      header="{{'Manager.ResellerDetails.TabTitles.SysAdminResellers' | translate}}">
+    </p-tabPanel>
+    <p-tabPanel header="{{ 'Manager.ResellerDetails.TabTitles.PromoCodes' | translate }}" class="ml-4">
+      <!-- <h4 class="p-mb-2">Promo Codes</h4> -->
+      <div class="TableScroll">
+        <div class="custom-table">
+          <p-table [value]="promocodeList" [paginator]="true" [rows]="10" responsiveLayout="scroll"
+            [totalRecords]="promocodeList.length" dataKey="promoCode">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'Admin.PromoCode.Columns.Promo_Code' | translate }}</th>
+                <th>{{ 'Admin.PromoCode.Columns.Setup_Fee' | translate }}</th>
+                <th>{{ 'Admin.PromoCode.Columns.Free_Binder' | translate }}</th>
+                <th>{{ 'Admin.PromoCode.Columns.Free_Month' | translate }}</th>
+                <th>{{ 'Admin.PromoCode.Columns.Requests' | translate }}</th>
+                <th>{{ 'Admin.PromoCode.Columns.Cycles' | translate }}</th>
+                <th>{{ 'Admin.PromoCode.Columns.Begin_Dates' | translate }}</th>
+                <th 
+                  pSortableColumn="endDate" 
+                  [pSortField]="'endDate'" 
+                  [pSortOrder]="1">
+                  {{ 'Admin.PromoCode.Columns.End_Dates' | translate }}
+                </th>
+                <th>{{ 'Admin.PromoCode.Columns.Applied' | translate }}</th>
+                <th style="width: 3rem">{{ 'Global.Actions' | translate }}</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-promocode>
+              <tr [pSelectableRow]="promocode">
+                <td class="tooltip_info cursor" (click)="tooltip_Data(promocode.name)" pTooltip="{{ promocode.name }}"
+                  tooltipPosition="top">
+                  {{ promocode.name | truncate: 20: '...' }}
+                </td>
+                <td>{{ promocode.setupFee | number: '1.2-2' }}</td>
+                <td>{{ promocode.freeBinder}}</td>
+                <td>{{ promocode.freeMonths}}</td>
+                <td>{{ promocode.requests }}</td>
+                <td>{{ promocode.cycles }}</td>
+                <td>{{ promocode.startDate | date }}</td>
+                <td>{{ promocode.endDate | date }}</td>
+                <td>{{ promocode.qty }}</td>
+                <td style="width: 3rem">
+                  <div class="d-flex justify-content-evenly align-items-center">
+                    <button pButton pTooltip="{{ 'Admin.PromoCode.PromoCode_Button.Edit_Promotion' | translate }}"
+                      type="button" tooltipPosition="left"
+                      class="p-button-rounded pi pi-pencil bg-white text-dark border-0"
+                      (click)="editPromocode(promocode)" style="margin-top: -12px;"></button>
+                    <button (click)='setCurrentPromotionForDeletion(promocode)' pButton
+                      pTooltip="{{ 'Admin.PromoCode.PromoCode_Button.Delete_Promotion' | translate }}"
+                      tooltipPosition="left" type="button"
+                      class="p-button-rounded pi pi-trash bg-white text-dark border-0">
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+          <div class="mt-6 h-1rem"></div>
+          <div class="d-flex justify-content-end fixed-bottom ml-320 py-3 pr-3 surface-ground">
+            <p-button label="{{ 'Admin.PromoCode.PromoCode_Button.Add_PromoCode' | translate }}"
+              styleClass="p-button-sm" (click)="onAddPromoCodeClick()"></p-button>
+          </div>
+        </div>
+      </div>
+
+      <app-r-sidebar *ngIf="viewModel.visibleAddPromoCode" [display]="viewModel.visibleAddPromoCode"
+        (closed)="onCancel()" [class.open]="viewModel.visibleAddPromoCode">
+        <h3 class="font-weight-bold">{{ isEditMode ? 'Edit Promo' : 'Add New Promo' }}</h3>
+        <app-add-promo-code *ngIf="viewModel.visibleAddPromoCode" [showDialog]="viewModel.visibleAddPromoCode"
+          [promoCodeData]="selectedPromoCodeData" [isEditMode]="isEditMode" (promoCodeAdded)="onPromoCodeAdded($event)"
+          (close)="onClosePromoCodeDialog()">
+        </app-add-promo-code>
+      </app-r-sidebar>
+
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-dialog header="Delete Promo Code" [(visible)]="viewModel.showDeleteDialog" (onHide)="hideDeleteDialogPromo()"
+  [resizable]="false" [draggable]="false" [modal]="true" [showHeader]="true">
+  <ng-template pTemplate="content">
+    Are you sure you want to delete the Promo Code <b>{{ viewModel.currentPromotionForDeletion?.name }}</b>?
+  </ng-template>
+  <ng-template pTemplate="footer" class="d-flex justify-content-end">
+    <button pButton pRipple type="button" label="{{ 'Global.Cancel' | translate }}"
+      class="p-button-text p-button p-button-sm mr-2" (click)="hideDeleteDialogPromo()"></button>
+    <p-button label="{{ 'Global.Delete' | translate }}" (onClick)="deletePromoCode()"
+      styleClass="p-button-sm p-button-danger"></p-button>
+  </ng-template>
+</p-dialog>
+<p-dialog styleClass="tooltip_full_text" [draggable]="false" [baseZIndex]="10000" [(visible)]="tooltip_info"
+  header="Full Details" [modal]="true">
+  <p>{{tooltip_Grid_Data}}</p>
+</p-dialog>
